@@ -9,11 +9,11 @@ A collection a useful tools for building queries in the Power Query Formula Lang
 
 1. Create a new blank query.
 2. Copy the content of [m-tools.pqfl](m-tools.pqfl) to this query using the advanced editor.
-3. Name the query `_`.
+3. Name the query `M`.
 
-Functions may then be access from other queries as records on `_`. For example, `Pipe` may be invoked as:
+Functions may then be access from other queries as records on `M`. For example, `Pipe` may be invoked as:
 
-    _[Pipe]({functionA, functionB, ...})
+    M[Pipe]({functionA, functionB, ...})
 
 
 ---
