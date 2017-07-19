@@ -1,0 +1,23 @@
+// A collection a useful tools for building Microsoft Power BI queries.
+[
+    /**
+     * Identity function.
+     *
+     * :: a -> a
+     */
+    Identity = (a) => a,
+
+    /**
+     * Compose two unary functions.
+     *
+     * :: (a -> b) (b -> c) -> a -> c
+     */
+    Compose = (f, g) => (x) => f(g(x)),
+
+    /**
+     * Perform a left-to-right composition across a list of functions.
+     *
+     * :: ((a -> b), (b -> c), ..., (y -> z)) -> a -> z
+     */
+    Pipe = (funcs) => List.Accumulate(funcs, Identity, (x, f) => Compose(f, x))
+]
