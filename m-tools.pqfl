@@ -1,6 +1,9 @@
 // A collection a useful tools for building Microsoft Power BI queries.
 
 let
+
+// Internal util functions.
+
     /**
      * Right-to-left composition of unary functions.
      *
@@ -13,9 +16,21 @@ let
      *
      * :: (a -> b) (b -> c) -> a -> c
      */
-    _Pipe = (f, g) => (x) => g(f(x))
+    _Pipe = (f, g) => (x) => g(f(x)),
+
+    /**
+     * Generic expander for applying the internal table column expansion
+     * functions in a composable way.
+     *
+     * :: Table a => Table.ExpandXColumn -> string [string] -> b -> b
+     */
+    _ExpandColumn = (expf) => (col, xs) => each expf(_, col, xs, List.Transform(xs, each col & "." & _))
 
 in [
+
+// ---
+// FP primatives
+
     /**
      * Identity function.
      *
@@ -35,5 +50,38 @@ in [
      *
      * :: ((a -> b), (b -> c), ..., (y -> z)) -> a -> z
      */
-    Pipe = (funcs) => List.Accumulate(funcs, Identity, _Pipe)
+    Pipe = (funcs) => List.Accumulate(funcs, Identity, _Pipe),
+
+// ---
+// Table transforms
+
+    /**
+     * Select a specific set of columns from a table of data and optionally
+     * rename them.
+     *
+     * :: Table a => [string] [string] -> a -> a
+     */
+    SelectColumns = (columns, optional labels) => each Table.SelectColumns(_, columns, labels),
+
+    /**
+     * Flatten the fields from a record column into additional columns.
+     *
+     * :: Table a => string [string] -> a -> a
+     */
+    ExpandRecordColumn = _ExpandColumn(Table.ExpandRecordColumn),
+
+    /**
+     * Flatten the fields from a table column into additional columns and rows.
+     *
+     * :: Table a => string [string] -> a -> a
+     */
+    ExpandTableColumn = _ExpandColumn(Table.ExpandTableColumn),
+
+    /**
+     * Flatten the fields from a list column into additional rows.
+     *
+     * :: Table a => string [string] -> a -> a
+     */
+    ExpandListColumn = (col) => each Table.ExpandListColumn(_, col)
+
 ]
