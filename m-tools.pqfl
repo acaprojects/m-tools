@@ -32,11 +32,18 @@ in [
 // Function composition
 
     /**
-     * Identity function.
+     * Function which always returns it's input.
      *
      * :: a -> a
      */
     Identity = (a) => a,
+
+    /**
+     * Return a function which always returns a given value.
+     *
+     * a -> (* -> a)
+     */
+    Const = (a) => (x) => a,
 
     /**
      * Perform a right-to-left composition across a list of functions.
