@@ -91,6 +91,14 @@ in [
      */
     ExpandListColumn = (col) => (table) => Table.ExpandListColumn(table, col),
 
+    /**
+     * Append a columns to a table. The generator function (fn) will be invoked
+     * for each row with a record type containing other column values.
+     *
+     * :: Table a, Record  => string (b -> c) type -> a -> a
+     */
+    AddColumn = (name, fn, optional dataType) => (table) => Table.AddColumn(table, name, fn, dataType),
+
 // ---
 // List operations
 
