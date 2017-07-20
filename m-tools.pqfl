@@ -84,4 +84,30 @@ in [
      */
     ExpandListColumn = (col) => each Table.ExpandListColumn(_, col)
 
+// ---
+// List operations
+
+    /**
+     * Fold over a list to produce a single item. The reducer function receives
+     * two values: (acc, value).
+     *
+     * :: ((a, b) -> a) a -> [b] -> a
+     */
+    Reduce = (fn, acc) => (list) => List.Accumulate(list, acc, fn),
+
+    /**
+     * Apply a transform to all elements of a list.
+     *
+     * (a -> b) -> [a] -> [b]
+     */
+    Map = (fn) => (list) => List.Transform(list, fn),
+
+    /**
+     * Evaluate elements of a list against a predicate, returning a new list
+     * of the items which evaluated to true.
+     *
+     * :: (a -> Boolean) -> [a] -> [a]
+     */
+    Filter = (fn) => (list) => List.Select(list, fn)
+
 ]
