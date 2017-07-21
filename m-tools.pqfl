@@ -99,6 +99,20 @@ in [
      */
     AddColumn = (name, fn, optional dataType) => (table) => Table.AddColumn(table, name, fn, dataType),
 
+    /**
+     * Tranform the data type of a table column.
+     *
+     * :: Table a, Type b => string b -> a -> a
+     */
+    TranformColumnType = (col, dataType) => (table) => Table.TransformColumnTypes(table, {{col, dataType}}),
+
+    /**
+     * Reorder columns across a table.
+     *
+     * :: Table a => [string] -> a -> a
+     */
+    ReorderColumns = (cols) => (table) => Table.ReorderColumns(table, cols),
+
 // ---
 // List operations
 
