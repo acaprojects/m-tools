@@ -15,6 +15,9 @@ Functions may then be access from other queries as records on `M`. For example, 
 
     M[Pipe]({functionA, functionB, ...})
 
+### Table Generators
+
+If working with time based data, functions for generating tables which split it in interesting ways are also provides in [date-table.pqfl](date-table.pqfl) and [time-table.pqfl](time-table.pqfl). Once imported as queries, invoke these to generate table then define relationships with any time based data sets.
 
 ---
 
