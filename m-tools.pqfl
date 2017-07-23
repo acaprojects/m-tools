@@ -25,7 +25,7 @@ let
      * Generic expander for applying the internal table column expansion
      * functions in a composable way.
      *
-     * :: Table a => Table.ExpandXColumn -> string [string] -> b -> b
+     * :: Table a => Table.ExpandXColumn -> string [string] -> a -> a
      */
     _ExpandColumn = (fn) => (col, xs) => (t) => fn(t, col, xs, List.Transform(xs, each col & "." & _))
 
@@ -98,7 +98,7 @@ in [
      * Append a columns to a table. The generator function (fn) will be invoked
      * for each row with a record type containing other column values.
      *
-     * :: Table a, Record  => string (b -> c) type -> a -> a
+     * :: Table a, Record b => string (b -> c) type -> a -> a
      */
     AddColumn = (name, fn, optional dataType) => (table) => Table.AddColumn(table, name, fn, dataType),
 
