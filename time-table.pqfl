@@ -18,24 +18,20 @@ let CreateTimeTable = () as table =>
         Seed = Table.FromList(MinuteList, Splitter.SplitByNothing(), {"Time"}),
 
         BuildTable = M[Pipe]({
+            // Primary key
             M[TranformColumnType]("Time", type time),
-            M[AddColumn]("Hour", each Time.StartOfHour([Time]), type time),
+
+            // Time components
+            M[AddColumn]("Hour Number", each Time.Hour([Time]), Int64.Type),
             M[AddColumn]("Minute", each Time.Minute([Time]), Int64.Type),
+
+            // Quantizations with the day (floor)
+            M[AddColumn]("Hour", each Time.StartOfHour([Time]), type time),
             M[AddColumn]("Quarter Hour",
                 each if [Minute] < 15 then [Hour]
                     else if [Minute] < 30 then Value.Add([Hour], #duration(0,0,15, 0))
                     else if [Minute] < 45 then Value.Add([Hour], #duration(0,0,30, 0))
                     else Value.Add([Hour], #duration(0,0,45, 0)),
-                type time
-            ),
-            M[ReorderColumns]({"Time", "Hour", "Quarter Hour", "Minute"}),
-            M[AddColumn]("Hour Number", each Time.Hour([Time]), Int64.Type),
-            M[AddColumn]("Next Hour",
-                each Value.Add([Hour], #duration(0,1,0, 0)),
-                type time
-            ),
-            M[AddColumn]("Next Quarter Hour",
-                each Value.Add([Quarter Hour], #duration(0,0,15, 0)),
                 type time
             ),
             M[AddColumn]("Period of Day",
@@ -55,6 +51,16 @@ let CreateTimeTable = () as table =>
                     else if [Hour Number] >= 16 and [Hour Number] < 20 then 4
                     else 5,
                 Int64.Type
+            ),
+
+            // Ceiling quantizations for duration windows
+            M[AddColumn]("Next Hour",
+                each Value.Add([Hour], #duration(0,1,0, 0)),
+                type time
+            ),
+            M[AddColumn]("Next Quarter Hour",
+                each Value.Add([Quarter Hour], #duration(0,0,15, 0)),
+                type time
             )
         }),
 
