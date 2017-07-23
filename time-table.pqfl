@@ -7,7 +7,7 @@
  * Create a table of common time deliniations across a 24 hour period for
  * slicing time based data sets in interesting ways.
  *
- * :: * -> Table
+ * :: () -> Table
  */
 let CreateTimeTable = () as table =>
     let
