@@ -116,6 +116,13 @@ in [
      */
     ReorderColumns = (cols) => (table) => Table.ReorderColumns(table, cols),
 
+    /**
+     * Remove a set of columns from a table.
+     *
+     * :: Table a => [string] -> a -> a
+     */
+    RemoveColumns = (cols) => (table) => Table.RemoveColumns(table, cols),
+
 // ---
 // List operations
 
