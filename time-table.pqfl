@@ -1,3 +1,14 @@
+// A collection a useful tools for building Microsoft Power BI queries.
+//
+// Author: Kim Burgess <kim@acaprojects.com>
+// Repo:   https://github.com/acaprojects/m-tools
+
+/**
+ * Create a table of common time deliniations across a 24 hour period for
+ * slicing time based data sets in interesting ways.
+ *
+ * :: * -> Table
+ */
 let CreateTimeTable = () as table =>
     let
         MinutesInDay = 60 * 24,

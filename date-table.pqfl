@@ -1,13 +1,18 @@
-let CreateDateTable = (StartDate as date, EndDate as date, optional Culture as nullable text) as table => 
-  let 
-    DayCount = Duration.Days(Duration.From(EndDate - StartDate)), 
-    Source = List.Dates(StartDate,DayCount,#duration(1,0,0,0)), 
-    TableFromList = Table.FromList(Source, Splitter.SplitByNothing()),    
-    ChangedType = Table.TransformColumnTypes(TableFromList,{{"Column1", type date}}), 
-    RenamedColumns = Table.RenameColumns(ChangedType,{{"Column1", "Date"}}), 
-    InsertYear = Table.AddColumn(RenamedColumns, "Year", each Date.Year([Date])), 
-    InsertQuarter = Table.AddColumn(InsertYear, "QuarterOfYear", each Date.QuarterOfYear([Date])), 
-    InsertMonth = Table.AddColumn(InsertQuarter, "MonthOfYear", each Date.Month([Date])), 
+// A collection a useful tools for building Microsoft Power BI queries.
+//
+// Author: Kim Burgess <kim@acaprojects.com>
+// Repo:   https://github.com/acaprojects/m-tools
+
+let CreateDateTable = (StartDate as date, EndDate as date, optional Culture as nullable text) as table =>
+  let
+    DayCount = Duration.Days(Duration.From(EndDate - StartDate)),
+    Source = List.Dates(StartDate,DayCount,#duration(1,0,0,0)),
+    TableFromList = Table.FromList(Source, Splitter.SplitByNothing()),
+    ChangedType = Table.TransformColumnTypes(TableFromList,{{"Column1", type date}}),
+    RenamedColumns = Table.RenameColumns(ChangedType,{{"Column1", "Date"}}),
+    InsertYear = Table.AddColumn(RenamedColumns, "Year", each Date.Year([Date])),
+    InsertQuarter = Table.AddColumn(InsertYear, "QuarterOfYear", each Date.QuarterOfYear([Date])),
+    InsertMonth = Table.AddColumn(InsertQuarter, "MonthOfYear", each Date.Month([Date])),
     InsertFinYearNumber = Table.AddColumn(InsertMonth, "FinYearNumber",each if [MonthOfYear] >= 7  then [Year] else [Year] -1 ),
     InsertFinYearDisplay = Table.AddColumn(InsertFinYearNumber, "FinYear" ,each "FY" & Text.End(Number.ToText([FinYearNumber],"D",""),2) & "/" & Text.End(Number.ToText([FinYearNumber]+1,"D",""),2)),
     InsertFinMonth = Table.AddColumn(InsertFinYearDisplay, "FinMonth", each if [MonthOfYear] >= 7  then [MonthOfYear] - 6 else [MonthOfYear] + 6 ),
