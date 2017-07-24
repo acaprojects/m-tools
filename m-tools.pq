@@ -25,7 +25,7 @@ let
      * Generic expander for applying the internal table column expansion
      * functions in a composable way.
      *
-     * :: Table a => Table.ExpandXColumn -> string [string] -> a -> a
+     * :: Table a => (a string [string] [string] -> a) -> string [string] -> a -> a
      */
     _ExpandColumn = (fn) => (col, xs) => (t) => fn(t, col, xs, List.Transform(xs, each col & "." & _))
 
