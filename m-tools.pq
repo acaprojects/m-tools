@@ -15,13 +15,6 @@ let
     _Compose = (f, g) => (x) => f(g(x)),
 
     /**
-     * Left-to-right composition unary functions.
-     *
-     * :: (a -> b) (b -> c) -> a -> c
-     */
-    _Pipe = (f, g) => (x) => g(f(x)),
-
-    /**
      * Generic expander for applying the internal table column expansion
      * functions in a composable way.
      *
@@ -60,14 +53,14 @@ in [
      *
      * :: ((y -> z), (x -> y), ..., (a -> b)) -> a -> z
      */
-    Compose = Reduce(_Compose, Identity),
+    Compose = Foldr(_Compose, Identity),
 
     /**
      * Perform a left-to-right composition across a list of functions.
      *
      * :: ((a -> b), (b -> c), ..., (y -> z)) -> a -> z
      */
-    Pipe = Reduce(_Pipe, Identity),
+    Pipe = Foldl(Flip(_Compose), Identity),
 
 // ---
 // Table transforms
@@ -134,12 +127,25 @@ in [
 // List operations
 
     /**
-     * Fold over a list to produce a single item. The reducer function receives
-     * two values: (acc, value).
+     * Perform a left-associative reduction over a list.
      *
-     * :: ((a, b) -> a) a -> [b] -> a
+     * :: (a b -> a) a -> [b] -> a
      */
-    Reduce = (fn, acc) => (list) => List.Accumulate(list, acc, fn),
+    Foldl = (fn, seed) => (list) => List.Accumulate(list, seed, fn),
+
+    /**
+     * Perform a right-associative reduction over a list.
+     *
+     * :: (a b -> b) -> b -> [a] -> b
+     */
+    Foldr = (fn, seed) => (list) =>
+        if List.IsEmpty(list) then seed
+        else
+            let
+                x = List.Last(list),
+                xs = List.RemoveLastN(list, 1)
+            in
+                fn(@Foldr(fn, x)(xs), seed),
 
     /**
      * Apply a transform to all elements of a list.
