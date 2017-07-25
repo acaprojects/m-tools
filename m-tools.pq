@@ -49,6 +49,13 @@ in [
     Const = (a) => (x) => a,
 
     /**
+     * Reverse the order of arguments to a function or arity 2.
+     *
+     * :: ((a, b) -> c) -> ((b, a) -> c)
+     */
+    Flip = (f) => (a, b) => f(b, a),
+
+    /**
      * Perform a right-to-left composition across a list of functions.
      *
      * :: ((y -> z), (x -> y), ..., (a -> b)) -> a -> z
