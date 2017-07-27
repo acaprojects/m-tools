@@ -85,7 +85,7 @@ in [
      *
      * :: ((a, b, c, ..., n) -> x) -> [a, b, c, ...] -> (n -> x)
      */
-    Partial1 = (f, a) => Compose({Partial(f, a), Of}),
+    Partial1 = (f, a) => _Compose(Partial(f, a), Of),
 
     /**
      * Takes a function f and a list of arguments, and returns a function g.
@@ -102,7 +102,7 @@ in [
      *
      * :: ((a, b, c, ..., n) -> x) -> d, e, f, ..., n] -> (a -> x)
      */
-    PartialRight1 = (f, a) => Compose({Partial(f, a), Of}),
+    PartialRight1 = (f, a) => _Compose(Partial(f, a), Of),
 
 // ---
 // Table transforms
