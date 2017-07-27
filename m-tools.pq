@@ -105,7 +105,7 @@ in [
     PartialRight1 = (f, a) => _Compose(PartialRight(f, a), Of),
 
     /**
-     * Curry a function so that argument are supplied one at a time up until
+     * Curry a function so that arguments are supplied one at a time up until
      * the specified arity is met at which point the original function will
      * be invoked.
      *
@@ -236,7 +236,7 @@ in [
      * this lifts that argument to be within a higher-order function allowing
      * a sequence of operations to be performed. This sequence is defined as a
      * list of lists, with element 0 containing the transform function and
-     * elements 1..n containing the arguments 1..n for that trasnform.
+     * elements 1..n containing the arguments 1..n for that transform.
      *
      *     ExtractRoomInfo = M[ChainOperations]({
      *         {Table.SelectColumns, {"RoomID", "RoomName"}},
