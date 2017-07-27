@@ -104,6 +104,23 @@ in [
      */
     PartialRight1 = (f, a) => _Compose(PartialRight(f, a), Of),
 
+    /**
+     * Curry a function so that argument are supplied one at a time up until
+     * the specified arity is met at which point the original function will
+     * be invoked.
+     *
+     * e.g. Curry(3, (a, b, c) => x) = (a) => (b) => (c) => x
+     *
+     * :: number (* -> a) -> (* -> a)
+     */
+    Curry = (arity, f) =>
+        let
+            Apply = (args) =>
+                if List.Count(args) >= arity then Function.Invoke(f, args)
+                else (x) => @Apply(args & Of(x))
+        in
+            Apply({}),
+
 // ---
 // Table transforms
 
