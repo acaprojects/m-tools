@@ -62,6 +62,48 @@ in [
      */
     Pipe = Foldl(Flip(_Compose), Identity),
 
+    /**
+     * Return a single item array containing the passed value.
+     *
+     * :: a -> [a]
+     */
+    Of = (a) => {a},
+
+    /**
+     * Takes a function f and a list of arguments, and returns a function g.
+     * When applied, g returns the result of applying f to the arguments
+     * provided initially followed by the argument list provided to g.
+     *
+     * :: ((a, b, c, ..., n) -> x) -> [a, b, c, ...] -> ([d, e, f, ..., n] -> x)
+     */
+    Partial = (f, a) => (b) => Function.Invoke(f, a & b),
+
+    /**
+     * Similar to Partial but instead of returning a function expecting a list
+     * of remaining arguments, provides a function expecting a final single
+     * argument in order to fully apply the initial function.
+     *
+     * :: ((a, b, c, ..., n) -> x) -> [a, b, c, ...] -> (n -> x)
+     */
+    Partial1 = (f, a) => Compose({Partial(f, a), Of}),
+
+    /**
+     * Takes a function f and a list of arguments, and returns a function g.
+     * When applied, g returns the result of applying f to the arguments
+     * provided to g followed by the argument list provided initially.
+     *
+     * :: ((a, b, c, ..., n) -> x) -> [d, e, f, ..., n] -> ([a, b, c, ...] -> x)
+     */
+    PartialRight = (f, a) => (b) => Function.Invoke(f, b & a),
+
+    /**
+     * Similar to PartialRight however accepts a single, final argument in order
+     * to fully apply the intial function.
+     *
+     * :: ((a, b, c, ..., n) -> x) -> d, e, f, ..., n] -> (a -> x)
+     */
+    PartialRight1 = (f, a) => Compose({Partial(f, a), Of}),
+
 // ---
 // Table transforms
 
