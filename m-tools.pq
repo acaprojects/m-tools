@@ -127,7 +127,7 @@ in [
      *
      * :: Table a => string string -> a -> a
      */
-    RenameColumn = (from, to) => (table) => Table.RenameColumn(table, {from, to}),
+    RenameColumn = (from, to) => (table) => Table.RenameColumns(table, {from, to}),
 
 // ---
 // List operations
