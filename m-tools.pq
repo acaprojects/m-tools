@@ -66,12 +66,11 @@ in [
 // Table transforms
 
     /**
-     * Select a specific set of columns from a table of data and optionally
-     * rename them.
+     * Select a specific set of columns from a table of data.
      *
-     * :: Table a => [string] [string] -> a -> a
+     * :: Table a => [string] -> a -> a
      */
-    SelectColumns = (columns, optional labels) => (table) => Table.SelectColumns(table, columns, labels),
+    SelectColumns = (columns) => (table) => Table.SelectColumns(table, columns),
 
     /**
      * Flatten the fields from a record column into additional columns.
