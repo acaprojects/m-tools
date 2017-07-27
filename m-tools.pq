@@ -37,9 +37,9 @@ in [
     /**
      * Return a function which always returns a given value.
      *
-     * a -> (* -> a)
+     * a -> b -> a
      */
-    Const = (a) => (x) => a,
+    Const = (a) => (b) => a,
 
     /**
      * Reverse the order of arguments to a function or arity 2.
