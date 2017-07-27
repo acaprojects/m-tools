@@ -122,6 +122,13 @@ in [
      */
     RemoveColumns = (cols) => (table) => Table.RemoveColumns(table, cols),
 
+    /**
+     * Rename a column.
+     *
+     * :: Table a => string string -> a -> a
+     */
+    RenameColumn = (from, to) => (table) => Table.RenameColumn(table, {from, to}),
+
 // ---
 // List operations
 
