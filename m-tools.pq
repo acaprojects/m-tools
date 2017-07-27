@@ -102,7 +102,7 @@ in [
      *
      * :: ((a, b, c, ..., n) -> x) -> d, e, f, ..., n] -> (a -> x)
      */
-    PartialRight1 = (f, a) => _Compose(Partial(f, a), Of),
+    PartialRight1 = (f, a) => _Compose(PartialRight(f, a), Of),
 
 // ---
 // Table transforms
