@@ -5,27 +5,14 @@
 
 let
 
-// Internal util functions.
-
     /**
-     * Right-to-left composition of unary functions.
+     * Right-to-left composition of a pair of unary functions.
      *
      * :: (b -> c) (a -> b) -> a -> c
      */
-    _Compose = (f, g) => (x) => f(g(x)),
-
-    /**
-     * Generic expander for applying the internal table column expansion
-     * functions in a composable way.
-     *
-     * :: Table a => (a string [string] [string] -> a) -> string [string] -> a -> a
-     */
-    _ExpandColumn = (fn) => (col, xs) => (t) => fn(t, col, xs, List.Transform(xs, each col & "." & _))
+    _Compose = (f, g) => (x) => f(g(x))
 
 in [
-
-// ---
-// Function composition
 
     /**
      * Function which always returns it's input.
@@ -120,76 +107,6 @@ in [
                 else (x) => @Apply(args & Of(x))
         in
             Apply({}),
-
-// ---
-// Table transforms
-
-    /**
-     * Select a specific set of columns from a table of data.
-     *
-     * :: Table a => [string] -> a -> a
-     */
-    SelectColumns = (columns) => (table) => Table.SelectColumns(table, columns),
-
-    /**
-     * Flatten the fields from a record column into additional columns.
-     *
-     * :: Table a => string [string] -> a -> a
-     */
-    ExpandRecordColumn = _ExpandColumn(Table.ExpandRecordColumn),
-
-    /**
-     * Flatten the fields from a table column into additional columns and rows.
-     *
-     * :: Table a => string [string] -> a -> a
-     */
-    ExpandTableColumn = _ExpandColumn(Table.ExpandTableColumn),
-
-    /**
-     * Flatten the fields from a list column into additional rows.
-     *
-     * :: Table a => string [string] -> a -> a
-     */
-    ExpandListColumn = (col) => (table) => Table.ExpandListColumn(table, col),
-
-    /**
-     * Append a columns to a table. The generator function (fn) will be invoked
-     * for each row with a record type containing other column values.
-     *
-     * :: Table a, Record b => string (b -> c) type -> a -> a
-     */
-    AddColumn = (name, fn, optional dataType) => (table) => Table.AddColumn(table, name, fn, dataType),
-
-    /**
-     * Tranform the data type of a table column.
-     *
-     * :: Table a, Type b => string b -> a -> a
-     */
-    TranformColumnType = (col, dataType) => (table) => Table.TransformColumnTypes(table, {{col, dataType}}),
-
-    /**
-     * Reorder columns across a table.
-     *
-     * :: Table a => [string] -> a -> a
-     */
-    ReorderColumns = (cols) => (table) => Table.ReorderColumns(table, cols),
-
-    /**
-     * Remove a set of columns from a table.
-     *
-     * :: Table a => [string] -> a -> a
-     */
-    RemoveColumns = (cols) => (table) => Table.RemoveColumns(table, cols),
-
-    /**
-     * Rename a column.
-     *
-     * :: Table a => string string -> a -> a
-     */
-    RenameColumn = (from, to) => (table) => Table.RenameColumns(table, {from, to}),
-
-// ---
-// List operations
 
     /**
      * Perform a left-associative reduction over a list.
