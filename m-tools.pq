@@ -225,7 +225,31 @@ in [
      *
      * :: (a -> Boolean) -> [a] -> [a]
      */
-    Filter = (fn) => (list) => List.Select(list, fn)
+    Filter = (fn) => (list) => List.Select(list, fn),
+
+    /**
+     * Given two lists, create a new list containing the result of appending b
+     * to a.
+     *
+     * :: [a] [a] -> [a]
+     */
+    Combine = (a, b) => a & b,
+
+    /**
+     * Add a single element to the tail of a list and return a new list
+     * containing the merged result.
+     *
+     * :: a -> [a] -> [a]
+     */
+    Append = (a) => (list) => list & Of(a),
+
+    /**
+    * Add a single element to the head of a list and return a new list
+    * containing the merged result.
+     *
+     * :: a -> [a] -> [a]
+     */
+    Prepend = (a) => (list) => Of(a) & list,
 
     /**
      * Provide the ability to chain sequences of internal table, record and
