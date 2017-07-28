@@ -16,115 +16,114 @@ let CreateDateTable = (StartDate as date, EndDate as date, optional Culture as n
 
     DaysList = List.Dates(StartDate, DaysInPeriod, #duration(1,0,0,0)),
 
-    Seed = Table.FromList(DaysList, Splitter.SplitByNothing(), {"Date"}),
+    Seed = M[ChainOperations]({
+        {Table.FromList, Splitter.SplitByNothing(), {"Date"}},
+        {Table.TransformColumnTypes, {{"Date", type date}}}
+    })(DaysList),
 
-    BuildTable = M[Pipe]({
-        // Primary key
-        M[TranformColumnType]("Date", type date),
-
+    BuildTable = M[AddColumns]({
         // Date components
-        M[AddColumn]("Year", each Date.Year([Date]), Int64.Type),
-        M[AddColumn]("Month", each Date.Month([Date]), Int64.Type),
-        M[AddColumn]("Day", each Date.Day([Date]), Int64.Type),
+        {"Year", each Date.Year([Date]), Int64.Type},
+        {"Month", each Date.Month([Date]), Int64.Type},
+        {"Day", each Date.Day([Date]), Int64.Type},
 
         // Calendar based quantizations
-        M[AddColumn]("Quarter", each Date.QuarterOfYear([Date]), Int64.Type),
-        M[AddColumn]("DayOfMonth", each Date.Day([Date]), Int64.Type),
-        M[AddColumn]("DayOfWeek",
+        {"Quarter", each Date.QuarterOfYear([Date]), Int64.Type},
+        {"DayOfMonth", each Date.Day([Date]), Int64.Type},
+        {"DayOfWeek",
             each Date.DayOfWeek([Date], 1) + 1,
             Int64.Type
-        ),
+        },
 
         // Useful string based splits
-        M[AddColumn]("MonthName",
+        {"MonthName",
             each Date.ToText([Date], "MMMM", Culture),
             type text
-        ),
-        M[AddColumn]("MonthInCalendar",
+        },
+        {"MonthInCalendar",
             each (try Text.Range([MonthName], 0, 3) otherwise [MonthName])
                 & " " & Number.ToText([Year]),
             type text
-        ),
-        M[AddColumn]("QuarterInCalendar",
+        },
+        {"QuarterInCalendar",
             each "Q" & Number.ToText([Quarter]) & " " & Number.ToText([Year]),
             type text
-        ),
-        M[AddColumn]("DayOfWeekName",
+        },
+        {"DayOfWeekName",
             each Date.ToText([Date], "dddd", Culture),
             type text
-        ),
+        },
 
         // Financial periods
-        M[AddColumn]("FinancialYearNumber",
+        {"FinancialYearNumber",
             each if [Month] >= 7 then [Year] else [Year] - 1,
             Int64.Type
-        ),
-        M[AddColumn]("FinancialYear",
+        },
+        {"FinancialYear",
             each "FY" & Text.End(Number.ToText([FinancialYearNumber]), 2) &
                 "/" & Text.End(Number.ToText([FinancialYearNumber] + 1), 2),
             type text
-        ),
-        M[AddColumn]("FinancialMonth",
+        },
+        {"FinancialMonth",
             each if [Month] >= 7 then [Month] - 6 else [Month] + 6,
             Int64.Type
-        ),
-        M[AddColumn]("FinancialQuarterNumber",
+        },
+        {"FinancialQuarterNumber",
             each if [Quarter] > 2 then [Quarter] - 2 else [Quarter] + 2,
             Int64.Type
-        ),
-        M[AddColumn]("FinancialQuarter",
+        },
+        {"FinancialQuarter",
             each "FQ" & Number.ToText([FinancialQuarterNumber]),
             type text
-        ),
+        },
 
         // Sortable int representation
-        M[AddColumn]("DateInt",
+        {"DateInt",
             each [Year] * 10000 + [Month] * 100 + [DayOfMonth],
             Int64.Type
-        ),
+        },
 
         // ISO8601 weeks
-        M[AddColumn]("CurrentThursday",
+        {"CurrentThursday",
             each Date.AddDays([Date], -Date.DayOfWeek([Date], 1) + 3),
             type date
-        ),
-        M[AddColumn]("ISOWeekJan4",
+        },
+        {"ISOWeekJan4",
             each Date.FromText(Number.ToText(Date.Year([CurrentThursday])) & "-01-04"),
             type date
-        ),
-        M[AddColumn]("ISOWeekYear",
+        },
+        {"ISOWeekYear",
             each Date.Year([CurrentThursday]),
             Int64.Type
-        ),
-        M[AddColumn]("ISOWeekFirstMon",
+        },
+        {"ISOWeekFirstMon",
             each
                 if [CurrentThursday] < [ISOWeekJan4] then Date.AddDays([CurrentThursday], -3)
                 else Date.AddDays([ISOWeekJan4], -Date.DayOfWeek([ISOWeekJan4], 1)),
             type date
-        ),
-        M[AddColumn]("ISOWeekNum",
+        },
+        {"ISOWeekNum",
             each Number.RoundUp(((Duration.Days(Duration.From([Date] - [ISOWeekFirstMon])) + 1 ) / 7)),
             Int64.Type
-        ),
-        M[AddColumn]("ISOWeekID",
+        },
+        {"ISOWeekID",
             each [ISOWeekYear] * 100 + [ISOWeekNum],
             Int64.Type
-        ),
-        M[AddColumn]("ISOWeekName",
+        },
+        {"ISOWeekName",
             each Number.ToText([ISOWeekYear]) & "W" &
                 Text.End("0" & Number.ToText(([ISOWeekNum] * 10) + [DayOfWeek]), 3),
             type text
-        ),
-        M[AddColumn]("ISOWeekNameLong",
+        },
+        {"ISOWeekNameLong",
             each Text.From([ISOWeekYear]) & "-W" &
                 Text.End("0" & Text.From([ISOWeekNum]), 2) & "-" &
                 Text.From([DayOfWeek]),
             type text
-        ),
-        M[RemoveColumns]({"CurrentThursday", "ISOWeekFirstMon"}),
+        },
 
         // 4-4-5 Calendar
-        M[AddColumn]("445",
+        {"445",
             each if [ISOWeekNum] < 5 then [Period=1, Quarter=1]
             else if [ISOWeekNum] < 9 then [Period=2, Quarter=1]
             else if [ISOWeekNum] < 14 then [Period=3, Quarter=1]
@@ -137,12 +136,19 @@ let CreateDateTable = (StartDate as date, EndDate as date, optional Culture as n
             else if [ISOWeekNum] < 44 then [Period=10, Quarter=4]
             else if [ISOWeekNum] < 48 then [Period=11, Quarter=4]
             else [Period=12, Quarter=4]
-        ),
-        M[ExpandRecordColumn]("445", {"Period", "Quarter"})
+        }
     }),
 
-    Table = BuildTable(Seed)
+    Table = BuildTable(Seed),
+
+    RemoveExcess = M[ChainOperations]({
+        {Table.ExpandRecordColumn, "445", {"Period", "Quarter"}, {"445 Period", "445 Quarter"}},
+        {Table.RemoveColumns, {"CurrentThursday", "ISOWeekFirstMon"}}
+    }),
+
+    FinalTable = RemoveExcess(Table)
+
   in
-    Table
+    FinalTable
 in
     CreateDateTable

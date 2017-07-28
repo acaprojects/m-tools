@@ -15,26 +15,26 @@ let CreateTimeTable = () as table =>
 
         MinuteList = List.Times(#time(0, 0, 0), MinutesInDay, #duration(0,0,1,0)),
 
-        Seed = Table.FromList(MinuteList, Splitter.SplitByNothing(), {"Time"}),
+        Seed = M[ChainOperations]({
+            {Table.FromList, Splitter.SplitByNothing(), {"Time"}},
+            {Table.TransformColumnTypes, {{"Time", type time}}}
+        })(MinuteList),
 
-        BuildTable = M[Pipe]({
-            // Primary key
-            M[TranformColumnType]("Time", type time),
-
+        BuildTable = M[AddColumns]({
             // Time components
-            M[AddColumn]("Hour Number", each Time.Hour([Time]), Int64.Type),
-            M[AddColumn]("Minute", each Time.Minute([Time]), Int64.Type),
+            {"Hour Number", each Time.Hour([Time]), Int64.Type},
+            {"Minute", each Time.Minute([Time]), Int64.Type},
 
             // Quantizations with the day (floor)
-            M[AddColumn]("Hour", each Time.StartOfHour([Time]), type time),
-            M[AddColumn]("Quarter Hour",
+            {"Hour", each Time.StartOfHour([Time]), type time},
+            {"Quarter Hour",
                 each if [Minute] < 15 then [Hour]
                     else if [Minute] < 30 then Value.Add([Hour], #duration(0,0,15, 0))
                     else if [Minute] < 45 then Value.Add([Hour], #duration(0,0,30, 0))
                     else Value.Add([Hour], #duration(0,0,45, 0)),
                 type time
-            ),
-            M[AddColumn]("Period of Day",
+            },
+            {"Period of Day",
                 each if [Hour Number] >= 0 and [Hour Number] < 4 then "After Midnight"
                     else if [Hour Number] >= 4 and [Hour Number] < 8 then "Early Morning"
                     else if [Hour Number] >= 8 and [Hour Number] < 12 then "Late Morning"
@@ -42,8 +42,8 @@ let CreateTimeTable = () as table =>
                     else if [Hour Number] >= 16 and [Hour Number] < 20 then "Evening"
                     else "Late Night",
                 type text
-            ),
-            M[AddColumn]("Period Sort",
+            },
+            {"Period Sort",
                 each if [Hour Number] >= 0 and [Hour Number] < 4 then 0
                     else if [Hour Number] >= 4 and [Hour Number] < 8 then 1
                     else if [Hour Number] >= 8 and [Hour Number] < 12 then 2
@@ -51,17 +51,17 @@ let CreateTimeTable = () as table =>
                     else if [Hour Number] >= 16 and [Hour Number] < 20 then 4
                     else 5,
                 Int64.Type
-            ),
+            },
 
             // Ceiling quantizations for duration windows
-            M[AddColumn]("Next Hour",
+            {"Next Hour",
                 each Value.Add([Hour], #duration(0,1,0, 0)),
                 type time
-            ),
-            M[AddColumn]("Next Quarter Hour",
+            },
+            {"Next Quarter Hour",
                 each Value.Add([Quarter Hour], #duration(0,0,15, 0)),
                 type time
-            )
+            }
         }),
 
         Table = BuildTable(Seed)
