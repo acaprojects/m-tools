@@ -10,51 +10,66 @@ let
      *
      * :: (b -> c) (a -> b) -> a -> c
      */
-    _Compose = (f, g) => (x) => f(g(x))
+    _Compose =
+        (f as function, g as function) =>
+        (x as any) =>
+        f(g(x))
 
 in [
 
     /**
-     * Function which always returns it's input.
+     * Identity for functions under composition.
      *
      * :: a -> a
      */
-    Identity = (a) => a,
+    Identity =
+        (a as any) =>
+        a,
 
     /**
      * Return a function which always returns a given value.
      *
      * a -> b -> a
      */
-    Const = (a) => (b) => a,
+    Const =
+        (a as any) =>
+        (b as any) =>
+        a,
 
     /**
      * Reverse the order of arguments to a function or arity 2.
      *
      * :: ((a, b) -> c) -> ((b, a) -> c)
      */
-    Flip = (f) => (a, b) => f(b, a),
+    Flip =
+        (f as function) =>
+        (a as any, b as any) =>
+        f(b, a),
 
     /**
      * Perform a right-to-left composition across a list of functions.
      *
      * :: ((y -> z), (x -> y), ..., (a -> b)) -> a -> z
      */
-    Compose = Foldr(_Compose, Identity),
+    Compose =
+        Foldr(_Compose, Identity),
 
     /**
      * Perform a left-to-right composition across a list of functions.
      *
      * :: ((a -> b), (b -> c), ..., (y -> z)) -> a -> z
      */
-    Pipe = Foldl(Flip(_Compose), Identity),
+    Pipe =
+        Foldl(Flip(_Compose), Identity),
 
     /**
      * Return a single item array containing the passed value.
      *
      * :: a -> [a]
      */
-    Of = (a) => {a},
+    Of =
+        (a as any) =>
+        {a},
 
     /**
      * Takes a function f and a list of arguments, and returns a function g.
@@ -63,7 +78,10 @@ in [
      *
      * :: ((a, b, c, ..., n) -> x) -> [a, b, c, ...] -> ([d, e, f, ..., n] -> x)
      */
-    Partial = (f, a) => (b) => Function.Invoke(f, a & b),
+    Partial =
+        (f as function, a as list) =>
+        (b as list) =>
+        Function.Invoke(f, a & b),
 
     /**
      * Similar to Partial but instead of returning a function expecting a list
@@ -72,7 +90,9 @@ in [
      *
      * :: ((a, b, c, ..., n) -> x) -> [a, b, c, ...] -> (n -> x)
      */
-    Partial1 = (f, a) => _Compose(Partial(f, a), Of),
+    Partial1 =
+        (f as function, a as list) =>
+        _Compose(Partial(f, a), Of),
 
     /**
      * Takes a function f and a list of arguments, and returns a function g.
@@ -81,7 +101,10 @@ in [
      *
      * :: ((a, b, c, ..., n) -> x) -> [d, e, f, ..., n] -> ([a, b, c, ...] -> x)
      */
-    PartialRight = (f, a) => (b) => Function.Invoke(f, b & a),
+    PartialRight =
+        (f as function, a as list) =>
+        (b as list) =>
+        Function.Invoke(f, b & a),
 
     /**
      * Similar to PartialRight however accepts a single, final argument in order
@@ -89,7 +112,9 @@ in [
      *
      * :: ((a, b, c, ..., n) -> x) -> d, e, f, ..., n] -> (a -> x)
      */
-    PartialRight1 = (f, a) => _Compose(PartialRight(f, a), Of),
+    PartialRight1 =
+        (f as function, a as list) =>
+        _Compose(PartialRight(f, a), Of),
 
     /**
      * Curry a function so that arguments are supplied one at a time up until
@@ -100,11 +125,16 @@ in [
      *
      * :: number (* -> a) -> (* -> a)
      */
-    Curry = (arity, f) =>
+    Curry =
+        (arity as number, f as function) =>
         let
-            Apply = (args) =>
-                if List.Count(args) >= arity then Function.Invoke(f, args)
-                else (x) => @Apply(args & Of(x))
+            Apply =
+                (args as list) =>
+                if List.Count(args) >= arity then
+                    Function.Invoke(f, args)
+                else
+                    (x as any) =>
+                    @Apply(args & Of(x))
         in
             Apply({}),
 
@@ -113,28 +143,37 @@ in [
      *
      * :: (a b -> a) a -> [b] -> a
      */
-    Foldl = (fn, seed) => (list) => List.Accumulate(list, seed, fn),
+    Foldl =
+        (f as function, seed as any) =>
+        (a as list) =>
+        List.Accumulate(a, seed, f),
 
     /**
      * Perform a right-associative reduction over a list.
      *
      * :: (a b -> b) -> b -> [a] -> b
      */
-    Foldr = (fn, seed) => (list) =>
-        if List.IsEmpty(list) then seed
+    Foldr =
+        (f as function, seed as any) =>
+        (a as list) =>
+        if List.IsEmpty(a) then
+            seed
         else
             let
-                x = List.Last(list),
-                xs = List.RemoveLastN(list, 1)
+                x = List.Last(a),
+                xs = List.RemoveLastN(a, 1)
             in
-                fn(@Foldr(fn, x)(xs), seed),
+                f(@Foldr(f, x)(xs), seed),
 
     /**
      * Apply a transform to all elements of a list.
      *
      * (a -> b) -> [a] -> [b]
      */
-    Map = (fn) => (list) => List.Transform(list, fn),
+    Map =
+        (f as function) =>
+        (a as list) =>
+        List.Transform(a, f),
 
     /**
      * Evaluate elements of a list against a predicate, returning a new list
@@ -142,7 +181,10 @@ in [
      *
      * :: (a -> Boolean) -> [a] -> [a]
      */
-    Filter = (fn) => (list) => List.Select(list, fn),
+    Filter =
+        (f as function) =>
+        (a as list) =>
+        List.Select(a, f),
 
     /**
      * Given two lists, create a new list containing the result of appending b
@@ -150,7 +192,9 @@ in [
      *
      * :: [a] [a] -> [a]
      */
-    Combine = (a, b) => a & b,
+    Combine =
+        (a as list, b as list) =>
+        a & b,
 
     /**
      * Add a single element to the tail of a list and return a new list
@@ -158,7 +202,10 @@ in [
      *
      * :: a -> [a] -> [a]
      */
-    Append = (a) => (list) => list & Of(a),
+    Append =
+        (a as any) =>
+        (b as list) =>
+        b & Of(a),
 
     /**
     * Add a single element to the head of a list and return a new list
@@ -166,7 +213,10 @@ in [
      *
      * :: a -> [a] -> [a]
      */
-    Prepend = (a) => (list) => Of(a) & list,
+    Prepend =
+        (a as any) =>
+        (b as list) =>
+        Of(a) & b,
 
     /**
      * Provide the ability to chain sequences of internal table, record and
@@ -189,7 +239,8 @@ in [
      */
     ChainOperations =
         let
-            Transform = (t) =>
+            Transform =
+                (t as list) =>
                 let
                     f = List.First(t),
                     args = List.Skip(t)
@@ -209,6 +260,7 @@ in [
      *
      * :: Table a => a -> [b] -> a
      */
-    AddColumns = _Compose(ChainOperations, Map(Prepend(Table.AddColumn)))
+    AddColumns =
+        _Compose(ChainOperations, Map(Prepend(Table.AddColumn)))
 
 ]
