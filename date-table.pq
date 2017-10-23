@@ -8,7 +8,7 @@
  * period. This may then be related to other data sets containing date based
  * data for splitting and grouping in interesting ways.
  *
- * :: Table a => (date, date, string) -> a
+ * :: (date, date, string) -> table
  */
 let CreateDateTable = (StartDate as date, EndDate as date, optional Culture as nullable text) as table =>
   let
