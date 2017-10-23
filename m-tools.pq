@@ -72,6 +72,16 @@ in [
         {a},
 
     /**
+     * Take a function that accepts an arbitary number of arguments and
+     * transform this to a function that takes a single list argument
+     * containing the original function arguments.
+     *
+     * :: (*... -> a) -> [*] -> a
+     */
+    Apply =
+        Curry(Function.Invoke),
+
+    /**
      * Takes a function f and a list of arguments, and returns a function g.
      * When applied, g returns the result of applying f to the arguments
      * provided initially followed by the argument list provided to g.
@@ -80,8 +90,7 @@ in [
      */
     Partial =
         (f as function, a as list) =>
-        (b as list) =>
-        Function.Invoke(f, a & b),
+        _Compose(Apply(f), Concat(a)),
 
     /**
      * Similar to Partial but instead of returning a function expecting a list
@@ -103,8 +112,7 @@ in [
      */
     PartialRight =
         (f as function, a as list) =>
-        (b as list) =>
-        Function.Invoke(f, b & a),
+        _Compose(Apply(f), (b as list) => Concat(b)(a)),
 
     /**
      * Similar to PartialRight however accepts a single, final argument in order
@@ -129,15 +137,15 @@ in [
         (f as function) =>
         let
             arity = Record.FieldCount(Type.FunctionParameters(Value.Type(f))),
-            Apply =
+            ApplyTo =
                 (args as list) =>
                 if List.Count(args) >= arity then
                     Function.Invoke(f, args)
                 else
                     (x as any) =>
-                    @Apply(args & Of(x))
+                    @ApplyTo(args & Of(x))
         in
-            Apply({}),
+            ApplyTo({}),
 
     /**
      * Perform a left-associative reduction over a list.
@@ -188,13 +196,14 @@ in [
         List.Select(a, f),
 
     /**
-     * Given two lists, create a new list containing the result of appending b
-     * to a.
+     * Given a list a and another list b, create a new list containing the
+     * result of appending b to a.
      *
-     * :: [a] [a] -> [a]
+     * :: [a] -> [a] -> [a]
      */
-    Combine =
-        (a as list, b as list) =>
+    Concat =
+        (a as list) =>
+        (b as list) =>
         a & b,
 
     /**
