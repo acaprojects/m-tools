@@ -117,17 +117,18 @@ in [
         _Compose(PartialRight(f, a), Of),
 
     /**
-     * Curry a function so that arguments are supplied one at a time up until
-     * the specified arity is met at which point the original function will
-     * be invoked.
+     * Curry a function so that it will continue to return functions or arity 1
+     * up until the original function is saturated, at which point it will be
+     * invoked.
      *
-     * e.g. Curry(3, (a, b, c) => x) = (a) => (b) => (c) => x
+     * e.g. Curry((a, b, c) => x) = (a) => (b) => (c) => x
      *
-     * :: number (* -> a) -> (* -> a)
+     * :: (* -> a) -> (* -> a)
      */
     Curry =
-        (arity as number, f as function) =>
+        (f as function) =>
         let
+            arity = Record.FieldCount(Type.FunctionParameters(Value.Type(f))),
             Apply =
                 (args as list) =>
                 if List.Count(args) >= arity then
