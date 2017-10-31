@@ -92,7 +92,7 @@ toRecord = group . merge . build
 main :: IO ()
 main = do
     putStrLn $ "Building lib from components in " ++ srcPath ++ "\n"
-    header <- readFile $ srcPath </> "header.txt"
+    header <- readFile $ srcPath </> "_header.txt"
     expressions <- readExpressions srcPath
     writeFile outFile $ header ++ "\n" ++ toRecord expressions
     mapM_ (putStrLn . indent 2) (identifier <$> expressions)
