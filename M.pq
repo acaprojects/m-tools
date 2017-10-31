@@ -1,7 +1,8 @@
 // A collection a useful tools for building Microsoft Power BI queries.
 //
-// Author: Kim Burgess <kim@acaprojects.com>
-// Repo:   https://github.com/acaprojects/m-tools
+// Author:  Kim Burgess <kim@acaprojects.com>
+// Repo:    https://github.com/acaprojects/m-tools
+// License: MIT
 
 [
     /**
