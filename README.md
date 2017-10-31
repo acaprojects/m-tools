@@ -19,8 +19,22 @@ Functions may then be access from other queries as records on `M`. For example, 
 
 If working with time based data, functions for generating tables which split it in interesting ways are also provides in [CreateDateTable.pq](CreateDateTable.pq) and [CreateTimeTable.pq](CreateTimeTable.pq). Once imported as queries, invoke these to generate table then define relationships with any time based data sets.
 
----
+## Contributing
 
+Do not directly edit [M.pq](M.pq). This is built from the components defined in
+[src/](src/). It is provided, preassembled for convenience only.
+
+To add functions, create new `*.pq` files within [src/](src/) containing the
+expression body and any relevant documentation (see the other files for
+reference). When compiled, the expression will be bound to the name of the file.
+
+### Building
+
+```bash
+runhaskell build.hs
+```
+
+---
 
 [M Language specification](https://msdn.microsoft.com/en-us/library/mt807488.aspx)
 
