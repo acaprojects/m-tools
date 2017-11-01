@@ -6,4 +6,4 @@
  * :: ((a, b, c, ..., n) -> x) -> [d, e, f, ..., n] -> ([a, b, c, ...] -> x)
  */
 (f as function, a as list) =>
-    Compose(Apply(f), (b as list) => Concat(b)(a))
+    Compose(Apply(f), (b as list) => b & a)

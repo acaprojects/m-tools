@@ -1,9 +1,6 @@
 /**
- * Given a list a and another list b, create a new list containing the
- * result of appending b to a.
+ * Flatten a list of lists in to a single list.
  *
- * :: [a] -> [a] -> [a]
+ * :: [[a]] -> [a]
  */
-(a as list) =>
-    (b as list) =>
-        a & b
+List.Combine

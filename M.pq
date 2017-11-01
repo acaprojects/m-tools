@@ -108,14 +108,20 @@
     ComposeMany = Foldr(Compose, Identity),
 
     /**
-     * Given a list a and another list b, create a new list containing the
-     * result of appending b to a.
+     * Flatten a list of lists in to a single list.
      *
-     * :: [a] -> [a] -> [a]
+     * :: [[a]] -> [a]
      */
-    Concat = (a as list) =>
-        (b as list) =>
-            a & b,
+    Concat = List.Combine,
+
+    /**
+     * Given function that maps to a list, apply it to a list of values and
+     * concatenate the result.
+     *
+     * :: (a -> [b]) -> [a] -> [b]
+     */
+    ConcatMap = (f as function) =>
+        Compose(Concat, Map(f)),
 
     /**
      * Return a function which always returns a given value.
@@ -201,6 +207,16 @@
         a,
 
     /**
+     * Given a list a and another list b, create a new list containing the
+     * result of appending b to a.
+     *
+     * :: [a] -> [a] -> [a]
+     */
+    Join = (a as list) =>
+        (b as list) =>
+            a & b,
+
+    /**
      * Apply a transform to all elements of a list.
      *
      * (a -> b) -> [a] -> [b]
@@ -232,7 +248,7 @@
      * :: ((a, b, c, ..., n) -> x) -> [a, b, c, ...] -> ([d, e, f, ..., n] -> x)
      */
     Partial = (f as function, a as list) =>
-        Compose(Apply(f), Concat(a)),
+        Compose(Apply(f), Join(a)),
 
     /**
      * Similar to Partial but instead of returning a function expecting a list
@@ -252,7 +268,7 @@
      * :: ((a, b, c, ..., n) -> x) -> [d, e, f, ..., n] -> ([a, b, c, ...] -> x)
      */
     PartialRight = (f as function, a as list) =>
-        Compose(Apply(f), (b as list) => Concat(b)(a)),
+        Compose(Apply(f), (b as list) => b & a),
 
     /**
      * Similar to PartialRight however accepts a single, final argument in order
