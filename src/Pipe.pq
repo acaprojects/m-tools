@@ -3,4 +3,4 @@
  *
  * :: ((a -> b), (b -> c), ..., (y -> z)) -> a -> z
  */
-Foldl(Flip(Compose), Identity)
+Foldl(Flip(Compose), Id)

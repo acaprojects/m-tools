@@ -105,7 +105,7 @@
      *
      * :: ((y -> z), (x -> y), ..., (a -> b)) -> a -> z
      */
-    ComposeMany = Foldr(Compose, Identity),
+    ComposeMany = Foldr(Compose, Id),
 
     /**
      * Flatten a list of lists in to a single list.
@@ -203,7 +203,7 @@
      *
      * :: a -> a
      */
-    Identity = (a as any) =>
+    Id = (a as any) =>
         a,
 
     /**
@@ -284,7 +284,7 @@
      *
      * :: ((a -> b), (b -> c), ..., (y -> z)) -> a -> z
      */
-    Pipe = Foldl(Flip(Compose), Identity),
+    Pipe = Foldl(Flip(Compose), Id),
 
     /**
      * Add a single element to the head of a list and return a new list

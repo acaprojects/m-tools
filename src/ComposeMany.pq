@@ -3,4 +3,4 @@
  *
  * :: ((y -> z), (x -> y), ..., (a -> b)) -> a -> z
  */
-Foldr(Compose, Identity)
+Foldr(Compose, Id)
