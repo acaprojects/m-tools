@@ -4,5 +4,5 @@
  * :: (a b -> a) a -> [b] -> a
  */
 (f as function, seed as any) =>
-    (a as list) =>
-        List.Accumulate(a, seed, f)
+    (xs as list) =>
+        List.Accumulate(xs, seed, f)

@@ -4,6 +4,6 @@
  *
  * :: a -> [a] -> [a]
  */
-(a as any) =>
-    (b as list) =>
-        Of(a) & b
+(x as any) =>
+    (xs as list) =>
+        Of(x) & xs

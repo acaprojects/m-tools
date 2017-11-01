@@ -5,5 +5,5 @@
  *
  * :: ((a, b, c, ..., n) -> x) -> [a, b, c, ...] -> (n -> x)
  */
-(f as function, a as list) =>
-    Compose(Partial(f, a), Of)
+(f as function, args as list) =>
+    Compose(Partial(f, args), Of)

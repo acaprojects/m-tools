@@ -49,9 +49,9 @@
      *
      * :: a -> [a] -> [a]
      */
-    Append = (a as any) =>
-        (b as list) =>
-            b & Of(a),
+    Append = (x as any) =>
+        (xs as list) =>
+            xs & Of(x),
 
     /**
      * Take a function that accepts an arbitary number of arguments and
@@ -146,11 +146,11 @@
             arity = Record.FieldCount(Type.FunctionParameters(Value.Type(f))),
             ApplyTo =
                 (args as list) =>
-                if List.Count(args) >= arity then
-                    Function.Invoke(f, args)
-                else
-                    (x as any) =>
-                    @ApplyTo(args & Of(x))
+                    if List.Count(args) >= arity then
+                        Function.Invoke(f, args)
+                    else
+                        (x as any) =>
+                        @ApplyTo(args & Of(x))
         in
             ApplyTo({}),
 
@@ -160,9 +160,9 @@
      *
      * :: (a -> Bool) -> [a] -> [a]
      */
-    Filter = (f as function) =>
-        (a as list) =>
-            List.Select(a, f),
+    Filter = (p as function) =>
+        (xs as list) =>
+            List.Select(xs, p),
 
     /**
      * Reverse the order of arguments to a function or arity 2.
@@ -179,8 +179,8 @@
      * :: (a b -> a) a -> [b] -> a
      */
     Foldl = (f as function, seed as any) =>
-        (a as list) =>
-            List.Accumulate(a, seed, f),
+        (xs as list) =>
+            List.Accumulate(xs, seed, f),
 
     /**
      * Perform a right-associative reduction over a list.
@@ -188,15 +188,15 @@
      * :: (a b -> b) -> b -> [a] -> b
      */
     Foldr = (f as function, seed as any) =>
-        (a as list) =>
-        if List.IsEmpty(a) then
-            seed
-        else
-            let
-                x = List.Last(a),
-                xs = List.RemoveLastN(a, 1)
-            in
-                f(@Foldr(f, x)(xs), seed),
+        (xs as list) =>
+            if List.IsEmpty(xs) then
+                seed
+            else
+                let
+                    h = List.Last(xs),
+                    t = List.RemoveLastN(xs, 1)
+                in
+                    f(@Foldr(f, h)(t), seed),
 
     /**
      * Identity for functions under composition.
@@ -222,8 +222,8 @@
      * (a -> b) -> [a] -> [b]
      */
     Map = (f as function) =>
-        (a as list) =>
-            List.Transform(a, f),
+        (xs as list) =>
+            List.Transform(xs, f),
 
     /**
      * Return a single item array containing the passed value.
@@ -247,8 +247,8 @@
      *
      * :: ((a, b, c, ..., n) -> x) -> [a, b, c, ...] -> ([d, e, f, ..., n] -> x)
      */
-    Partial = (f as function, a as list) =>
-        Compose(Apply(f), Join(a)),
+    Partial = (f as function, args as list) =>
+        Compose(Apply(f), Join(args)),
 
     /**
      * Similar to Partial but instead of returning a function expecting a list
@@ -257,8 +257,8 @@
      *
      * :: ((a, b, c, ..., n) -> x) -> [a, b, c, ...] -> (n -> x)
      */
-    Partial1 = (f as function, a as list) =>
-        Compose(Partial(f, a), Of),
+    Partial1 = (f as function, args as list) =>
+        Compose(Partial(f, args), Of),
 
     /**
      * Takes a function f and a list of arguments, and returns a function g.
@@ -292,7 +292,7 @@
      *
      * :: a -> [a] -> [a]
      */
-    Prepend = (a as any) =>
-        (b as list) =>
-            Of(a) & b
+    Prepend = (x as any) =>
+        (xs as list) =>
+            Of(x) & xs
 ]

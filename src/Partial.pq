@@ -5,5 +5,5 @@
  *
  * :: ((a, b, c, ..., n) -> x) -> [a, b, c, ...] -> ([d, e, f, ..., n] -> x)
  */
-(f as function, a as list) =>
-    Compose(Apply(f), Join(a))
+(f as function, args as list) =>
+    Compose(Apply(f), Join(args))

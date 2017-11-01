@@ -4,5 +4,5 @@
  * (a -> b) -> [a] -> [b]
  */
 (f as function) =>
-    (a as list) =>
-        List.Transform(a, f)
+    (xs as list) =>
+        List.Transform(xs, f)

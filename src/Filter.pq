@@ -4,6 +4,6 @@
  *
  * :: (a -> Bool) -> [a] -> [a]
  */
-(f as function) =>
-    (a as list) =>
-        List.Select(a, f)
+(p as function) =>
+    (xs as list) =>
+        List.Select(xs, p)

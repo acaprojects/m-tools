@@ -4,12 +4,12 @@
  * :: (a b -> b) -> b -> [a] -> b
  */
 (f as function, seed as any) =>
-    (a as list) =>
-    if List.IsEmpty(a) then
-        seed
-    else
-        let
-            x = List.Last(a),
-            xs = List.RemoveLastN(a, 1)
-        in
-            f(@Foldr(f, x)(xs), seed)
+    (xs as list) =>
+        if List.IsEmpty(xs) then
+            seed
+        else
+            let
+                h = List.Last(xs),
+                t = List.RemoveLastN(xs, 1)
+            in
+                f(@Foldr(f, h)(t), seed)

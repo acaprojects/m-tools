@@ -12,10 +12,10 @@
         arity = Record.FieldCount(Type.FunctionParameters(Value.Type(f))),
         ApplyTo =
             (args as list) =>
-            if List.Count(args) >= arity then
-                Function.Invoke(f, args)
-            else
-                (x as any) =>
-                @ApplyTo(args & Of(x))
+                if List.Count(args) >= arity then
+                    Function.Invoke(f, args)
+                else
+                    (x as any) =>
+                    @ApplyTo(args & Of(x))
     in
         ApplyTo({})
