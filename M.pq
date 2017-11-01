@@ -19,6 +19,31 @@
     AddColumns = Compose(ChainOperations, Map(Prepend(Table.AddColumn))),
 
     /**
+     * Check if all elements of a list satisfy a given predicate.
+     *
+     * :: (a -> Bool) -> [a] -> Bool
+     */
+    All = (p as function) =>
+        (xs as list) =>
+            And(Map(p, xs)),
+
+    /**
+     * Logical conjunction of a list of boolean values.
+     *
+     * :: [Bool] -> Bool
+     */
+    And = List.AllTrue,
+
+    /**
+     * Check if any elements of a list satisfy a given predicate.
+     *
+     * :: (a -> Bool) -> [a] -> Bool
+     */
+    Any = (p as function) =>
+        (xs as list) =>
+            Or(Map(p, xs)),
+
+    /**
      * Add a single element to the tail of a list and return a new list
      * containing the merged result.
      *
@@ -191,6 +216,13 @@
      */
     Of = (a as any) =>
         {a},
+
+    /**
+     * Logical disjunction of a list of boolean values.
+     *
+     * :: [Bool] -> Bool
+     */
+    Or = List.AnyTrue,
 
     /**
      * Takes a function f and a list of arguments, and returns a function g.
