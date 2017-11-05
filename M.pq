@@ -44,16 +44,6 @@
             Or(Map(p, xs)),
 
     /**
-     * Add a single element to the tail of a list and return a new list
-     * containing the merged result.
-     *
-     * :: a -> [a] -> [a]
-     */
-    Append = (x as any) =>
-        (xs as list) =>
-            xs & Of(x),
-
-    /**
      * Take a function that accepts an arbitary number of arguments and
      * transform this to a function that takes a single list argument
      * containing the original function arguments.
