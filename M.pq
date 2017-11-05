@@ -14,7 +14,7 @@
      * The chain may then be fed a table containing at least one column as a
      * seed.
      *
-     * :: Table a => a -> [b] -> a
+     * :: (Table a, Record b) => [(Text, b -> c, Type)] -> a -> a
      */
     AddColumns = Compose(ChainOperations, Map(Cons(Table.AddColumn))),
 
