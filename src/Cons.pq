@@ -6,4 +6,4 @@
  */
 (x as any) =>
     (xs as list) =>
-        Of(x) & xs
+        {x} & xs

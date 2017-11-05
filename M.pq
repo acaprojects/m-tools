@@ -7,16 +7,16 @@
 [
     /**
      * Provide a simplified method for programmatically contructing table from
-     * relationships between columns. Accept a list of lists of the structure:
+     * relationships between columns. Accepts a list of lists of the structure:
      *
      *     {<column name>, <column generator>, <type>}
      *
-     * The chain may then be fed a table containing at least on column as a
+     * The chain may then be fed a table containing at least one column as a
      * seed.
      *
      * :: Table a => a -> [b] -> a
      */
-    AddColumns = Compose(ChainOperations, Map(Prepend(Table.AddColumn))),
+    AddColumns = Compose(ChainOperations, Map(Cons(Table.AddColumn))),
 
     /**
      * Check if all elements of a list satisfy a given predicate.
@@ -122,6 +122,16 @@
      */
     ConcatMap = (f as function) =>
         Compose(Concat, Map(f)),
+
+    /**
+     * Add a single element to the head of a list and return a new list
+     * containing the merged result.
+     *
+     * :: a -> [a] -> [a]
+     */
+    Cons = (x as any) =>
+        (xs as list) =>
+            {x} & xs,
 
     /**
      * Return a function which always returns a given value.
@@ -284,15 +294,5 @@
      *
      * :: ((a -> b), (b -> c), ..., (y -> z)) -> a -> z
      */
-    Pipe = Foldl(Flip(Compose), Id),
-
-    /**
-     * Add a single element to the head of a list and return a new list
-     * containing the merged result.
-     *
-     * :: a -> [a] -> [a]
-     */
-    Prepend = (x as any) =>
-        (xs as list) =>
-            Of(x) & xs
+    Pipe = Foldl(Flip(Compose), Id)
 ]
