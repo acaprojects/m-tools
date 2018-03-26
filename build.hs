@@ -12,7 +12,7 @@ module Main where
 import System.FilePath
 import System.Directory (listDirectory)
 import Data.Char (isSpace)
-import Data.List (intercalate, isPrefixOf)
+import Data.List (intercalate, isPrefixOf, sort)
 
 --
 -- Config
@@ -38,7 +38,7 @@ data PQExpression = PQExpression { identifier :: String
 lsFiles :: FileExtension -> FilePath -> IO [FilePath]
 lsFiles x = fmap (filter hasExt) . files
     where
-        files = fmap reverse . listDirectory
+        files path = sort <$> listDirectory path
         hasExt = (==) x . takeExtension
 
 -- | lsFiles with a relative path rather than file name.
