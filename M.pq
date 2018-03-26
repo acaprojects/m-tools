@@ -53,6 +53,16 @@
     Apply = Curry(Function.Invoke),
 
     /**
+     * Given two lists of values, return a list containing their product set.
+     *
+     * :: [a] [b] -> [[a, b]]
+     */
+    CartProd = (xs as list, ys as list) =>
+        M[ConcatMap]((x) => M[ConcatMap]((y) => {
+            {x, y}
+        })(ys))(xs),
+
+    /**
      * Provide the ability to chain sequences of internal table, record and
      * list operations.
      *
